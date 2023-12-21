@@ -27,6 +27,11 @@ impl Assembler {
         self.buffer.clone()
     }
 
+    /// Moves a register or 8-bit immediate value from `src` into a register `dest`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the `src` operand is not `RegisterOrImm::Reg()` or `RegisterOrImm:Imm8()`.
     pub fn mw(&mut self, dest: Register, src: RegisterOrImm) {
         match src {
             RegisterOrImm::Reg(reg) => {
@@ -41,6 +46,9 @@ impl Assembler {
         }
     }
 
+    /// Loads a 8-bit value from memory into a register `dest`.
+    /// If `src` is `Some(...)`, the value passed in `src` is used as the source address.
+    /// If `src` is `None`, the value in the `HL` register is used as the source address.
     pub fn lw(&mut self, dest: Register, src: Option<u16>) {
         match src {
             Some(addr) => {
@@ -53,6 +61,9 @@ impl Assembler {
         }
     }
 
+    /// Stores an 8-bit value from a register `src` into memory.
+    /// If `dest` is `Some(...)`, the value passed in `dest` is used as the destination address.
+    /// If `dest` is `None`, the value in the `HL` register is used as the destination address.
     pub fn sw(&mut self, dest: Option<u16>, src: Register) {
         match dest {
             Some(addr) => {
@@ -65,6 +76,11 @@ impl Assembler {
         }
     }
 
+    /// Pushes a register or 8-bit immediate value onto the stack.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the `src` operand is not `RegisterOrImm::Reg()` or `RegisterOrImm:Imm8()`.
     pub fn push(&mut self, src: RegisterOrImm) {
         match src {
             RegisterOrImm::Reg(reg) => {
@@ -78,15 +94,23 @@ impl Assembler {
         }
     }
 
+    /// Pops a value from the stack and loads it into a register `dest`.
     pub fn pop(&mut self, dest: Register) {
         self.buffer.push(0x04 << 4 | 0x08 | dest as u8);
     }
 
+    /// Loads a 16-bit value from memory into the `HL` register.
     pub fn lda(&mut self, addr: u16) {
         self.buffer.push(5 << 4);
         self.emit_u16(addr);
     }
 
+    /// Jumps to the address specified by the `HL` register if the immediate value `src` or the
+    /// value in the register `src` is not zero.
+    /// 
+    /// # Panics
+    /// 
+    /// Panics if the `src` operand is not `RegisterOrImm::Reg()` or `RegisterOrImm:Imm8()`.
     pub fn jnz(&mut self, src: RegisterOrImm) {
         match src {
             RegisterOrImm::Reg(reg) => {
@@ -100,6 +124,11 @@ impl Assembler {
         }
     }
 
+    /// Reads a byte from the port specified by `src` into a register `dest`.
+    ///
+    /// # Panics
+    /// 
+    /// Panics if the `src` operand is not `RegisterOrImm::Reg()` or `RegisterOrImm:Imm8()`.
     pub fn inb(&mut self, dest: Register, src: RegisterOrImm) {
         match src {
             RegisterOrImm::Reg(reg) => {
@@ -114,6 +143,11 @@ impl Assembler {
         }
     }
 
+    /// Writes a byte from a register `src` to the port specified by `dest`.
+    ///
+    /// # Panics
+    /// 
+    /// Panics if the `dest` operand is not `RegisterOrImm::Reg()` or `RegisterOrImm:Imm8()`.
     pub fn outb(&mut self, dest: RegisterOrImm, src: Register) {
         match dest {
             RegisterOrImm::Reg(reg) => {
@@ -128,6 +162,12 @@ impl Assembler {
         }
     }
 
+    /// Adds a register or 8-bit immediate value `src` and the value in a register `dest`.
+    /// The result is stored in the register `dest`.
+    /// 
+    /// # Panics
+    /// 
+    /// Panics if the `src` operand is not `RegisterOrImm::Reg()` or `RegisterOrImm:Imm8()`.
     pub fn add(&mut self, dest: Register, src: RegisterOrImm) {
         match src {
             RegisterOrImm::Reg(reg) => {
@@ -142,6 +182,12 @@ impl Assembler {
         }
     }
 
+    /// Adds with carry a register or 8-bit immediate value `src` and the value in a register `dest`.
+    /// The result is stored in the register `dest`.
+    /// 
+    /// # Panics
+    /// 
+    /// Panics if the `src` operand is not `RegisterOrImm::Reg()` or `RegisterOrImm:Imm8()`.
     pub fn adc(&mut self, dest: Register, src: RegisterOrImm) {
         match src {
             RegisterOrImm::Reg(reg) => {
@@ -156,6 +202,12 @@ impl Assembler {
         }
     }
 
+    /// Performs a bitwise AND operating on a register or 8-bit immediate value `src` and the value in a register `dest`.
+    /// The result is stored in the register `dest`.
+    /// 
+    /// # Panics
+    /// 
+    /// Panics if the `src` operand is not `RegisterOrImm::Reg()` or `RegisterOrImm:Imm8()`.
     pub fn and(&mut self, dest: Register, src: RegisterOrImm) {
         match src {
             RegisterOrImm::Reg(reg) => {
@@ -170,6 +222,12 @@ impl Assembler {
         }
     }
 
+    /// Performs a bitwise OR operating on a register or 8-bit immediate value `src` and the value in a register `dest`.
+    /// The result is stored in the register `dest`.
+    /// 
+    /// # Panics
+    /// 
+    /// Panics if the `src` operand is not `RegisterOrImm::Reg()` or `RegisterOrImm:Imm8()`.
     pub fn or(&mut self, dest: Register, src: RegisterOrImm) {
         match src {
             RegisterOrImm::Reg(reg) => {
@@ -184,6 +242,12 @@ impl Assembler {
         }
     }
 
+    /// Performs a bitwise NOR operating on a register or 8-bit immediate value `src` and the value in a register `dest`.
+    /// The result is stored in the register `dest`.
+    /// 
+    /// # Panics
+    /// 
+    /// Panics if the `src` operand is not `RegisterOrImm::Reg()` or `RegisterOrImm:Imm8()`.
     pub fn nor(&mut self, dest: Register, src: RegisterOrImm) {
         match src {
             RegisterOrImm::Reg(reg) => {
@@ -198,6 +262,13 @@ impl Assembler {
         }
     }
 
+
+    /// Compares a register or 8-bit immediate value `src` and the value in a register `dest`.
+    /// Sets the flags register accordingly.
+    /// 
+    /// # Panics
+    /// 
+    /// Panics if the `src` operand is not `RegisterOrImm::Reg()` or `RegisterOrImm:Imm8()`.
     pub fn cmp(&mut self, left: Register, right: RegisterOrImm) {
         match right {
             RegisterOrImm::Reg(reg) => {
@@ -212,6 +283,12 @@ impl Assembler {
         }
     }
 
+    /// Subtracts a register or 8-bit immediate value `src` from the value in a register `dest`.
+    /// The result is stored in the register `dest`.
+    /// 
+    /// # Panics
+    /// 
+    /// Panics if the `src` operand is not `RegisterOrImm::Reg()` or `RegisterOrImm:Imm8()`.
     pub fn sbb(&mut self, dest: Register, src: RegisterOrImm) {
         match src {
             RegisterOrImm::Reg(reg) => {
@@ -226,6 +303,7 @@ impl Assembler {
         }
     }
 
+    #[inline(always)]
     fn emit_u16(&mut self, value: u16) {
         self.buffer.push((value & 0xFF) as u8);
         self.buffer.push((value >> 8) as u8);
