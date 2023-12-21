@@ -1,1 +1,6 @@
+# cargo
 /target
+
+# debugging files
+asm
+*.bin
