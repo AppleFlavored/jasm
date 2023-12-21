@@ -3,4 +3,12 @@ name = "jasm"
 version = "0.1.0"
 edition = "2021"
 
+[lib]
+name = "jasm"
+path = "src/lib.rs"
+
+[[bin]]
+name = "jasm"
+path = "src/bin/jasm.rs"
+
 [dependencies]
