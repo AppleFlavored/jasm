@@ -1,6 +1,9 @@
 [package]
 name = "jasm"
 version = "0.1.0"
+description = "An assembler for the JDH-8 architecture."
+license = "MIT"
+repository = "https://github.com/AppleFlavored/jasm"
 edition = "2021"
 
 [lib]
