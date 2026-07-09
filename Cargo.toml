@@ -10,8 +10,4 @@ edition = "2021"
 name = "jasm"
 path = "src/lib.rs"
 
-[[bin]]
-name = "jasm"
-path = "src/bin/jasm.rs"
-
 [dependencies]

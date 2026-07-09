@@ -11,7 +11,6 @@ pub enum Register {
 pub enum RegisterOrImm {
     Reg(Register),
     Imm8(u8),
-    Imm16(u16),
 }
 
 pub struct Assembler {
@@ -28,10 +27,6 @@ impl Assembler {
     }
 
     /// Moves a register or 8-bit immediate value from `src` into a register `dest`.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the `src` operand is not `RegisterOrImm::Reg()` or `RegisterOrImm:Imm8()`.
     pub fn mw(&mut self, dest: Register, src: RegisterOrImm) {
         match src {
             RegisterOrImm::Reg(reg) => {
@@ -42,7 +37,6 @@ impl Assembler {
                 self.buffer.push(dest as u8);
                 self.buffer.push(value);
             }
-            _ => panic!("invalid source operand"),
         }
     }
 
@@ -77,10 +71,6 @@ impl Assembler {
     }
 
     /// Pushes a register or 8-bit immediate value onto the stack.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the `src` operand is not `RegisterOrImm::Reg()` or `RegisterOrImm:Imm8()`.
     pub fn push(&mut self, src: RegisterOrImm) {
         match src {
             RegisterOrImm::Reg(reg) => {
@@ -90,7 +80,6 @@ impl Assembler {
                 self.buffer.push(0x03 << 4);
                 self.buffer.push(value);
             }
-            _ => panic!("invalid source operand"),
         }
     }
 
@@ -107,10 +96,6 @@ impl Assembler {
 
     /// Jumps to the address specified by the `HL` register if the immediate value `src` or the
     /// value in the register `src` is not zero.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the `src` operand is not `RegisterOrImm::Reg()` or `RegisterOrImm:Imm8()`.
     pub fn jnz(&mut self, src: RegisterOrImm) {
         match src {
             RegisterOrImm::Reg(reg) => {
@@ -120,15 +105,10 @@ impl Assembler {
                 self.buffer.push(0x06 << 4);
                 self.buffer.push(value);
             }
-            _ => panic!("invalid source operand"),
         }
     }
 
     /// Reads a byte from the port specified by `src` into a register `dest`.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the `src` operand is not `RegisterOrImm::Reg()` or `RegisterOrImm:Imm8()`.
     pub fn inb(&mut self, dest: Register, src: RegisterOrImm) {
         match src {
             RegisterOrImm::Reg(reg) => {
@@ -139,15 +119,10 @@ impl Assembler {
                 self.buffer.push(0x07 << 4 | dest as u8);
                 self.buffer.push(value);
             }
-            _ => panic!("invalid source operand"),
         }
     }
 
     /// Writes a byte from a register `src` to the port specified by `dest`.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the `dest` operand is not `RegisterOrImm::Reg()` or `RegisterOrImm:Imm8()`.
     pub fn outb(&mut self, dest: RegisterOrImm, src: Register) {
         match dest {
             RegisterOrImm::Reg(reg) => {
@@ -158,16 +133,11 @@ impl Assembler {
                 self.buffer.push(0x08 << 4 | src as u8);
                 self.buffer.push(value);
             }
-            _ => panic!("invalid destination operand"),
         }
     }
 
     /// Adds a register or 8-bit immediate value `src` and the value in a register `dest`.
     /// The result is stored in the register `dest`.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the `src` operand is not `RegisterOrImm::Reg()` or `RegisterOrImm:Imm8()`.
     pub fn add(&mut self, dest: Register, src: RegisterOrImm) {
         match src {
             RegisterOrImm::Reg(reg) => {
@@ -178,16 +148,11 @@ impl Assembler {
                 self.buffer.push(0x09 << 4 | dest as u8);
                 self.buffer.push(value);
             }
-            _ => panic!("invalid source operand"),
         }
     }
 
     /// Adds with carry a register or 8-bit immediate value `src` and the value in a register `dest`.
     /// The result is stored in the register `dest`.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the `src` operand is not `RegisterOrImm::Reg()` or `RegisterOrImm:Imm8()`.
     pub fn adc(&mut self, dest: Register, src: RegisterOrImm) {
         match src {
             RegisterOrImm::Reg(reg) => {
@@ -198,16 +163,11 @@ impl Assembler {
                 self.buffer.push(0x0A << 4 | dest as u8);
                 self.buffer.push(value);
             }
-            _ => panic!("invalid source operand"),
         }
     }
 
     /// Performs a bitwise AND operating on a register or 8-bit immediate value `src` and the value in a register `dest`.
     /// The result is stored in the register `dest`.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the `src` operand is not `RegisterOrImm::Reg()` or `RegisterOrImm:Imm8()`.
     pub fn and(&mut self, dest: Register, src: RegisterOrImm) {
         match src {
             RegisterOrImm::Reg(reg) => {
@@ -218,16 +178,11 @@ impl Assembler {
                 self.buffer.push(0x0B << 4 | dest as u8);
                 self.buffer.push(value);
             }
-            _ => panic!("invalid source operand"),
         }
     }
 
     /// Performs a bitwise OR operating on a register or 8-bit immediate value `src` and the value in a register `dest`.
     /// The result is stored in the register `dest`.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the `src` operand is not `RegisterOrImm::Reg()` or `RegisterOrImm:Imm8()`.
     pub fn or(&mut self, dest: Register, src: RegisterOrImm) {
         match src {
             RegisterOrImm::Reg(reg) => {
@@ -238,7 +193,6 @@ impl Assembler {
                 self.buffer.push(0x0C << 4 | dest as u8);
                 self.buffer.push(value);
             }
-            _ => panic!("invalid source operand"),
         }
     }
 
@@ -258,7 +212,6 @@ impl Assembler {
                 self.buffer.push(0x0D << 4 | dest as u8);
                 self.buffer.push(value);
             }
-            _ => panic!("invalid source operand"),
         }
     }
 
@@ -278,7 +231,6 @@ impl Assembler {
                 self.buffer.push(0x0E << 4 | left as u8);
                 self.buffer.push(value);
             }
-            _ => panic!("invalid source operand"),
         }
     }
 
@@ -298,7 +250,6 @@ impl Assembler {
                 self.buffer.push(0x0F << 4 | dest as u8);
                 self.buffer.push(value);
             }
-            _ => panic!("invalid source operand"),
         }
     }
 
